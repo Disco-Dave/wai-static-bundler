@@ -1,0 +1,60 @@
+name:                wai-static-bundler
+version:             0.1.0.0
+github:              "Disco-Dave/wai-static-bundler"
+license:             BSD3
+author:              "David Burkett"
+maintainer:          "db.discodave@gmail.com"
+copyright:           "GPLv2"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/Disco-Dave/wai-static-bundler#readme>
+
+ghc-options:
+- -Wall
+- -Wcompat
+- -Werror
+- -Widentities
+- -Wincomplete-record-updates
+- -Wincomplete-uni-patterns
+- -Wpartial-fields
+- -Wredundant-constraints
+
+default-extensions:
+- BangPatterns
+- OverloadedStrings
+- TupleSections
+
+dependencies:
+- base >= 4.7 && < 5
+- bytestring
+- containers
+- hasmin
+- hjsmin
+- http-types
+- text
+- unliftio
+- wai
+
+library:
+  source-dirs: src
+
+tests:
+  wai-static-bundler-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - wai-static-bundler
