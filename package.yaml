@@ -58,3 +58,5 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - wai-static-bundler
+    - hspec
+    - hspec-wai

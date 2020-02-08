@@ -48,19 +48,21 @@ makeApplication bundles = do
   pure $ \request send -> do
     let pathInfo      = Wai.pathInfo request
         requestedFile = Text.intercalate "/" pathInfo
-    send $ case Map.lookup requestedFile bundledFiles of
-      Nothing -> Wai.responseBuilder HTTP.notFound404 [] mempty
-      Just (BundledCss css) ->
-        Wai.responseLBS HTTP.ok200 [("Content-Type", "text/css")] css
-      Just (BundledJs js) ->
-        Wai.responseLBS HTTP.ok200 [("Content-Type", "text/javascript")] js
+    send $ if Wai.requestMethod request /= HTTP.methodGet
+      then Wai.responseBuilder HTTP.methodNotAllowed405 [] mempty
+      else case Map.lookup requestedFile bundledFiles of
+        Nothing -> Wai.responseBuilder HTTP.notFound404 [] mempty
+        Just (BundledCss css) ->
+          Wai.responseLBS HTTP.ok200 [("Content-Type", "text/css")] css
+        Just (BundledJs js) ->
+          Wai.responseLBS HTTP.ok200 [("Content-Type", "text/javascript")] js
 
 makeMiddleware :: Text -> Bundles -> IO Middleware
 makeMiddleware root bundles = do
   bundleApplication <- makeApplication bundles
-  pure $ \application request send -> 
+  pure $ \application request send ->
     case Wai.pathInfo request of
-      (p : t) | p == root ->
+      p : t | p == root ->
         let modifiedRequest = request { Wai.pathInfo = t }
         in  bundleApplication modifiedRequest send
       _ -> application request send
