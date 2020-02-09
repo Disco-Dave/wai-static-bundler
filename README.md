@@ -1,5 +1,5 @@
 # Goal
-Mimic the functionality of the (bundler)[https://docs.microsoft.com/en-us/aspnet/mvc/overview/performance/bundling-and-minification] found in ASP.Net
+Mimic the functionality of the [bundler](https://docs.microsoft.com/en-us/aspnet/mvc/overview/performance/bundling-and-minification) found in ASP.Net
 
 ## Tasks
 * [x] Load, bundle, and minify JavaScript
