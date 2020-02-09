@@ -5,6 +5,7 @@ import           Network.Wai                    ( Application )
 import           Test.Hspec
 import           Test.Hspec.Wai
 
+import qualified Data.ByteString.Lazy          as LByteString
 import qualified Network.Wai.StaticBundler     as StaticBundler
 import qualified Network.Wai                   as Wai
 import qualified Network.HTTP.Types            as HTTP
@@ -65,7 +66,7 @@ spec = do
   describe "makeMiddleware" $
     with testMiddleware $ do
       it "forwards to wrapped application when root does not match" $ 
-        get "some/request" `shouldRespondWith` "OK!" { matchStatus = 200 }
+        get "some/request" `shouldRespondWith` "/some/request" { matchStatus = 200 }
 
       it "forwards to static bundler when root does match" $ do
         let bundledJs = "function someExample2(bar){someExample1(foo)}\nfunction someExample2(bar){someExample1(foo)}"
@@ -88,7 +89,10 @@ testMiddleware = do
   middleware <- StaticBundler.makeMiddleware "our_bundles" testBundle
   pure $ middleware sampleApplication
  where
-  sampleApplication _ send = send $ Wai.responseLBS HTTP.status200 [] "OK!"
+  sampleApplication r send = send $ Wai.responseLBS
+    HTTP.status200
+    []
+    (LByteString.fromStrict $ Wai.rawPathInfo r)
 
 testBundle :: StaticBundler.Bundles
 testBundle = StaticBundler.bundlesFromList
